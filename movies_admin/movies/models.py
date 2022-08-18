@@ -31,7 +31,7 @@ class Genre(UUIDMixin, TimeStampMixin):
     # Первым аргументом обычно идёт человекочитаемое название поля
     name = models.CharField(_('name'), max_length=255)
     # blank=True делает поле необязательным для заполнения.
-    description = models.TextField(_('description'), blank=True)
+    description = models.TextField(_('description'), blank=True, null=True)
 
     class Meta:
         db_table = "content\".\"genre"
@@ -70,11 +70,13 @@ class FilmWork(UUIDMixin, TimeStampMixin):
         verbose_name_plural = 'Фильмы'
 
     title = models.TextField(_('title'), blank=False)
-    description = models.TextField(_('description'))
-    creation_date = models.DateTimeField(_('creation_date'))
-    rating = models.FloatField(_('rating'), blank=True, validators=[MinValueValidator(0),
-                                                                    MaxValueValidator(100)])
-
+    description = models.TextField(_('description'), blank=True, null=True,)
+    creation_date = models.DateTimeField(_('creation_date'), blank=True, null=True,)
+    rating = models.FloatField(_('rating'),
+                               blank=True,
+                               validators=[MinValueValidator(0), MaxValueValidator(100)],
+                               null=True)
+    file_path = models.FileField(_('file'), blank=True, null=True, upload_to='movies/')
     type = models.CharField(_('type'), choices=FilmWorkTypes.choices, max_length=255)
     genre = models.ManyToManyField(Genre, through="GenreFilmWork")
     persons = models.ManyToManyField(Person, through='PersonFilmWork')

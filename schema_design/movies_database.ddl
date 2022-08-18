@@ -28,8 +28,6 @@ CREATE TABLE IF NOT EXISTS content.person_film_work (
 
 CREATE INDEX film_work_creation_date_idx ON content.film_work(creation_date);
 
-CREATE INDEX person_full_name_idx ON content.person(full_name);
-
 CREATE UNIQUE INDEX film_work_person_idx ON content.person_film_work (film_work_id, person_id);
 
 CREATE TABLE IF NOT EXISTS content.genre (
