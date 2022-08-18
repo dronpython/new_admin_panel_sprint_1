@@ -52,8 +52,6 @@ class Person(UUIDMixin, TimeStampMixin):
         verbose_name = 'Участник фильма'
 
 
-# ToDo: add foreign keys
-# ToDo: delete creation_date?
 class FilmWork(UUIDMixin, TimeStampMixin):
 
     def __str__(self):
@@ -89,20 +87,20 @@ class GenreFilmWork(UUIDMixin):
 
     class Meta:
         db_table = "content\".\"genre_film_work"
-        verbose_name = "Жанры фильма"
+        verbose_name = _("Жанры фильма")
 
 
 class PersonFilmWork(UUIDMixin):
     class PersonRoles(models.TextChoices):
-        actor = 'actor'
-        director = 'director'
-        screenwriter = 'screenwriter'
+        actor = _('actor')
+        director = _('director')
+        screenwriter = _('screenwriter')
 
-    film_work = models.ForeignKey('FilmWork', on_delete=models.CASCADE)
-    person = models.ForeignKey('Person', on_delete=models.CASCADE)
+    film_work = models.ForeignKey(_('FilmWork'), on_delete=models.CASCADE)
+    person = models.ForeignKey(_('Person'), on_delete=models.CASCADE)
     role = models.CharField(_('role'), choices=PersonRoles.choices, max_length=100)
     created = models.DateTimeField(_('created'), auto_now_add=True)
 
     class Meta:
-        db_table = "content\".\"person_film_work"
-        verbose_name = 'Участники фильма'
+        db_table = 'content\".\"person_film_work'
+        verbose_name = _('Участники фильма')
