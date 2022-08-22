@@ -1,7 +1,7 @@
 import sqlite3
 import psycopg2
 from psycopg2.extensions import connection as _connection
-from psycopg2.extras import DictCursor
+from psycopg2.extras import DictCursor, quote_ident
 from contextlib import contextmanager
 
 
@@ -16,14 +16,24 @@ class SQLiteLoader:
         return d
 
     @contextmanager
-    def conn_context(self):
-        self._conn.row_factory = self.dict_factory
-        yield self._conn  # С конструкцией yield вы познакомитесь в следующем модуле
-        # Пока воспринимайте её как return, после которого код может продолжить выполняться дальше
-        self._conn.close()
+    def conn_context(self, use_factory=False):
+        if use_factory:
+            self._conn.row_factory = self.dict_factory
+        yield self._conn
+        # self._conn.close()
 
     def load_data(self, table):
         with self.conn_context() as conn:
+            curs = conn.cursor()
+            curs.execute(f"SELECT * FROM {table};")
+            while True:
+                data = curs.fetchmany(100)
+                if not data:
+                    break
+                yield data
+
+    def load_all_data(self, table):
+        with self.conn_context(use_factory=True) as conn:
             curs = conn.cursor()
             curs.execute(f"SELECT * FROM {table};")
             data = curs.fetchall()
@@ -41,46 +51,36 @@ class PostgresSaver:
         data = cur.fetchall()
         return data
 
-    def insert_data(self, table, columns, data: tuple):
+    def insert_data(self, table, columns, data):
+        template = str(tuple(['%s' for _ in range(len(data))])).replace("'", "")
+
         cur = self._conn.cursor()
-        data = list(data)
-
-        for item in data:
-            item_index = data.index(item)
-            if isinstance(item, str):
-                data[item_index] = item.replace('"', "'").replace("None", "Null").replace("'", "''")
-
-        data = tuple(data)
-        insert_string = "INSERT INTO {} {} VALUES {} ON CONFLICT (id) DO NOTHING".format(table, columns, data)
-        insert_string = insert_string.replace('"', "'").replace("None", "Null").replace('"', "'")
-        print(insert_string)
-        cur.execute(insert_string)
+        s = cur.mogrify("INSERT INTO {table} {vals} VALUES {template} ON CONFLICT (id) DO NOTHING".format(table=table,
+                                                                                                          vals=columns,
+                                                                                                          template=template), data)
+        print(s)
+        cur.execute(s)
         self._conn.commit()
 
     def save_all_film_works(self, data):
         cols = "(id, title, description, creation_date, file_path, rating, type, created, modified)"
-        for row in data:
-            self.insert_data("content.film_work", cols, row.values())
+        self.insert_data("content.film_work", cols, data)
 
     def save_all_persons(self, data):
         cols = "(id, full_name, created, modified)"
-        for row in data:
-            self.insert_data("content.person", cols, row.values())
+        self.insert_data("content.person", cols, data)
 
     def save_all_genres(self, data):
         cols = "(id, name, description, created, modified)"
-        for row in data:
-            self.insert_data("content.genre", cols, row.values())
+        self.insert_data("content.genre", cols, data)
 
     def save_all_genre_film_works(self, data):
         cols = "(id, film_work_id, genre_id, created)"
-        for row in data:
-            self.insert_data("content.genre_film_work", cols, row.values())
+        self.insert_data("content.genre_film_work", cols, data)
 
     def save_all_person_film_works(self, data):
         cols = "(id, film_work_id, person_id, role, created)"
-        for row in data:
-            self.insert_data("content.person_film_work", cols, row.values())
+        self.insert_data("content.person_film_work", cols, data)
 
 
 def load_from_sqlite(connection: sqlite3.Connection, pg_conn: _connection):
@@ -88,29 +88,38 @@ def load_from_sqlite(connection: sqlite3.Connection, pg_conn: _connection):
     postgres_saver = PostgresSaver(pg_conn)
     sqlite_loader = SQLiteLoader(connection)
 
-    film_works_sql = sqlite_loader.load_data("film_work")
-    postgres_saver.save_all_film_works(film_works_sql)
+    # film_works_sql_paginated = sqlite_loader.load_data("film_work")
+    # for data in film_works_sql_paginated:
+    #     postgres_saver.save_all_film_works(tuple(data))
+
+    film_works_sql = sqlite_loader.load_all_data("film_work")
+    for data in film_works_sql:
+        postgres_saver.save_all_film_works(tuple(data.values()))
     film_works_psql = postgres_saver.load_data("content.film_work")
 
-    persons_sql = sqlite_loader.load_data("person")
-    postgres_saver.save_all_persons(persons_sql)
+    persons_sql = sqlite_loader.load_all_data("person")
+    for data in persons_sql:
+        postgres_saver.save_all_persons(tuple(data.values()))
     persons_psql = postgres_saver.load_data("content.person")
 
-    genres_sql = sqlite_loader.load_data("genre")
-    postgres_saver.save_all_genres(genres_sql)
-    genres_psql = postgres_saver.load_data("content.genres")
+    genres_sql = sqlite_loader.load_all_data("genre")
+    for data in genres_sql:
+        postgres_saver.save_all_genres(tuple(data.values()))
+    genres_psql = postgres_saver.load_data("content.genre")
 
-    genre_film_works_sql = sqlite_loader.load_data("genre_film_work")
-    postgres_saver.save_all_genre_film_works(genre_film_works_sql)
+    genre_film_works_sql = sqlite_loader.load_all_data("genre_film_work")
+    for data in genre_film_works_sql:
+        postgres_saver.save_all_genre_film_works(tuple(data.values()))
     genre_film_works_psql = postgres_saver.load_data("content.genre_film_work")
 
-    person_film_works_sql = sqlite_loader.load_data("person_film_work")
-    postgres_saver.save_all_person_film_works(person_film_works_sql)
+    person_film_works_sql = sqlite_loader.load_all_data("person_film_work")
+    for data in person_film_works_sql:
+        postgres_saver.save_all_person_film_works(tuple(data.values()))
     person_film_works_psql = postgres_saver.load_data("content.person_film_work")
 
-    assert len(film_works_sql) == len(film_works_psql)
+    assert len(list(film_works_sql)) == len(list(film_works_psql))
 
-    for _ in range(len(film_works_psql)):
+    for _ in range(len(list(film_works_psql))):
         assert film_works_sql[_]["id"] == film_works_psql[_]["id"], \
             f'\n{film_works_sql[_]["id"]}\n{film_works_psql[_]["id"]}'
 
