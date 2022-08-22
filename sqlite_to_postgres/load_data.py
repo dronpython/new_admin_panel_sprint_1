@@ -24,7 +24,7 @@ class SQLiteLoader:
         # self._conn.close()
 
     def load_data(self, table):
-        with self.conn_context() as conn:
+        with self.conn_context(use_factory=True) as conn:
             curs = conn.cursor()
             curs.execute(f"SELECT * FROM {table};")
             while True:
@@ -64,9 +64,10 @@ class PostgresSaver:
         self._conn.commit()
 
     def insert_many_of_data(self, table, columns, data):
+        columns = str(columns).replace("created_at", "created").replace("updated_at", "modified").replace("'", "")
         template = str(tuple(['%s' for _ in range(len(data[0]))])).replace("'", "")
         cur = self._conn.cursor()
-        args_str = ','.join(cur.mogrify(template, x).decode('utf-8') for x in data)
+        args_str = ','.join(cur.mogrify(template, tuple(x.values())).decode('utf-8') for x in data)
         strg = f"INSERT INTO {table} {columns} VALUES " + args_str + " ON CONFLICT (id) DO NOTHING"
         print(strg)
         cur.execute(strg)
@@ -79,39 +80,47 @@ def load_from_sqlite(connection: sqlite3.Connection, pg_conn: _connection):
 
     film_works_sql = sqlite_loader.load_data("film_work")
     for data in film_works_sql:
-        columns = "(id, title, description, creation_date, file_path, rating, type, created, modified)"
         postgres_saver.insert_many_of_data("content.film_work",
-                                           columns,
+                                           tuple(data[0].keys()),
                                            data)
-    film_works_psql = postgres_saver.load_data("content.film_work")
 
     persons_sql = sqlite_loader.load_data("person")
     for data in persons_sql:
-        columns = "(id, full_name, created, modified)"
-        postgres_saver.insert_many_of_data("content.person", columns, data)
-
-    persons_psql = postgres_saver.load_data("content.person")
+        postgres_saver.insert_many_of_data("content.person", tuple(data[0].keys()), data)
 
     genres_sql = sqlite_loader.load_data("genre")
     for data in genres_sql:
-        columns = "(id, name, description, created, modified)"
-        postgres_saver.insert_many_of_data("content.genre", columns, data)
-    genres_psql = postgres_saver.load_data("content.genre")
+        postgres_saver.insert_many_of_data("content.genre", tuple(data[0].keys()), data)
 
     genre_film_works_sql = sqlite_loader.load_data("genre_film_work")
     for data in genre_film_works_sql:
-        columns = "(id, film_work_id, genre_id, created)"
-        postgres_saver.insert_many_of_data("content.genre_film_work", columns, data)
-    genre_film_works_psql = postgres_saver.load_data("content.genre_film_work")
+        postgres_saver.insert_many_of_data("content.genre_film_work", tuple(data[0].keys()), data)
 
     person_film_works_sql = sqlite_loader.load_data("person_film_work")
     for data in person_film_works_sql:
-        columns = "(id, film_work_id, person_id, role, created)"
-        postgres_saver.insert_many_of_data("content.person_film_work", columns, data)
+        postgres_saver.insert_many_of_data("content.person_film_work", tuple(data[0].keys()), data)
 
+    film_works_psql = postgres_saver.load_data("content.film_work")
+    persons_psql = postgres_saver.load_data("content.person")
+    genres_psql = postgres_saver.load_data("content.genre")
     person_film_works_psql = postgres_saver.load_data("content.person_film_work")
+    genre_film_works_psql = postgres_saver.load_data("content.genre_film_work")
 
-    # assert len(list(film_works_sql)) == len(list(film_works_psql))
+    assert len(list(film_works_sql)) == len(list(film_works_psql)), \
+        f"{str(len(list(film_works_sql)))} != {len(list(film_works_psql))}"
+
+    assert len(list(persons_sql)) == len(persons_psql), \
+        f"{str(len(list(persons_sql)))} != {len(list(persons_psql))}"
+
+    assert len(list(genres_sql)) == len(genres_psql), \
+        f"{str(len(list(genres_sql)))} != {len(list(genres_psql))}"
+
+    assert len(list(genre_film_works_sql)) == len(genre_film_works_psql), \
+        f"{str(len(list(genre_film_works_sql)))} != {len(list(genre_film_works_psql))}"
+
+    assert len(list(person_film_works_sql)) == len(person_film_works_psql), \
+        f"{str(len(list(persons_sql)))} != {len(list(persons_psql))}"
+
     #
     # for _ in range(len(list(film_works_psql))):
     #     assert film_works_sql[_]["id"] == film_works_psql[_]["id"], \
