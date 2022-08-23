@@ -4,7 +4,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext_lazy as _
 
 
-# Create your models here.
 class TimeStampMixin(models.Model):
     # auto_now_add автоматически выставит дату создания записи
     created = models.DateTimeField(_("created"), auto_now_add=True)
@@ -26,18 +25,14 @@ class UUIDMixin(models.Model):
 class Genre(UUIDMixin, TimeStampMixin):
     def __str__(self):
         return self.name
-    # Типичная модель в Django использует число в качестве id.
-    # В таких ситуациях поле не описывается в модели.
-    # Первым аргументом обычно идёт человекочитаемое название поля
     name = models.CharField(_('name'), max_length=255)
     # blank=True делает поле необязательным для заполнения.
     description = models.TextField(_('description'), blank=True, null=True)
 
     class Meta:
         db_table = "content\".\"genre"
-        # Следующие два поля отвечают за название модели в интерфейсе
-        verbose_name = 'Жанр'
-        verbose_name_plural = 'Жанры'
+        verbose_name = _('Genre')
+        verbose_name_plural = _('Genres')
 
 
 class Person(UUIDMixin, TimeStampMixin):
@@ -49,7 +44,7 @@ class Person(UUIDMixin, TimeStampMixin):
 
     class Meta:
         db_table = "content\".\"person"
-        verbose_name = 'Участник фильма'
+        verbose_name = _('Person')
 
 
 class FilmWork(UUIDMixin, TimeStampMixin):
@@ -58,14 +53,16 @@ class FilmWork(UUIDMixin, TimeStampMixin):
         return self.title
 
     class FilmWorkTypes(models.TextChoices):
-        tv_show = 'tv_show'
-        movie = 'movie'
+        tv_show = _('tv_show')
+        movie = _('movie')
 
     class Meta:
         db_table = "content\".\"film_work"
-        # Следующие два поля отвечают за название модели в интерфейсе
-        verbose_name = 'Фильм'
-        verbose_name_plural = 'Фильмы'
+        verbose_name = _('Movie')
+        verbose_name_plural = _('Movies')
+        indexes = [
+            models.Index(fields=['creation_date'], name='film_work_creation_date_idx'),
+        ]
 
     title = models.TextField(_('title'), blank=False)
     description = models.TextField(_('description'), blank=True, null=True,)
@@ -81,13 +78,20 @@ class FilmWork(UUIDMixin, TimeStampMixin):
 
 
 class GenreFilmWork(UUIDMixin):
-    film_work = models.ForeignKey('FilmWork', on_delete=models.CASCADE)
-    genre = models.ForeignKey('Genre', on_delete=models.CASCADE)
+    film_work = models.ForeignKey(FilmWork, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     created = models.DateTimeField(_('created'), auto_now_add=True)
 
     class Meta:
         db_table = "content\".\"genre_film_work"
-        verbose_name = _("Жанры фильма")
+        verbose_name = _("Film's genres")
+        constraints = [models.UniqueConstraint(fields=['film_work_id', 'genre_id'],
+                                               name='film_work_genre_idx')]
+        indexes = [
+            models.Index(fields=['film_work'], name='film_work_fk_idx'),
+            models.Index(fields=['genre'], name='genre_fk_idx'),
+
+        ]
 
 
 class PersonFilmWork(UUIDMixin):
@@ -96,11 +100,11 @@ class PersonFilmWork(UUIDMixin):
         director = _('director')
         screenwriter = _('screenwriter')
 
-    film_work = models.ForeignKey(_('FilmWork'), on_delete=models.CASCADE)
-    person = models.ForeignKey(_('Person'), on_delete=models.CASCADE)
+    film_work = models.ForeignKey(FilmWork, on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
     role = models.CharField(_('role'), choices=PersonRoles.choices, max_length=100)
     created = models.DateTimeField(_('created'), auto_now_add=True)
 
     class Meta:
         db_table = 'content\".\"person_film_work'
-        verbose_name = _('Участники фильма')
+        verbose_name = _('Film crew')

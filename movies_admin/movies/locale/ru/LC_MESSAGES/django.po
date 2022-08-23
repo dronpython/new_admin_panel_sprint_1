@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-14 14:13+0000\n"
+"POT-Creation-Date: 2022-08-23 10:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,46 +20,98 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: movies/apps.py:8
+#: movies/apps.py:8 movies/models.py:62
 msgid "Movies"
 msgstr "Фильмы"
 
-#: movies/models.py:10 movies/models.py:85 movies/models.py:101
+#: movies/models.py:9 movies/models.py:83 movies/models.py:106
 msgid "created"
-msgstr "Дата создания"
+msgstr "Дата создания≠"
 
-#: movies/models.py:12
+#: movies/models.py:11
 msgid "modified"
 msgstr "Дата изменения"
 
-#: movies/models.py:20
+#: movies/models.py:19
 msgid "id"
 msgstr "Идентификатор"
 
-#: movies/models.py:32
+#: movies/models.py:28
 msgid "name"
 msgstr "Название"
 
-#: movies/models.py:34 movies/models.py:48 movies/models.py:73
+#: movies/models.py:30 movies/models.py:43 movies/models.py:68
 msgid "description"
 msgstr "Описание"
 
-#: movies/models.py:72
+#: movies/models.py:34
+msgid "Genre"
+msgstr "Жанр"
+
+#: movies/models.py:35
+msgid "Genres"
+msgstr "Жанры"
+
+#: movies/models.py:47
+msgid "Person"
+msgstr "Персона"
+
+#: movies/models.py:56
+msgid "tv_show"
+msgstr "ТВ шоу"
+
+#: movies/models.py:57
+#, fuzzy
+#| msgid "Movies"
+msgid "movie"
+msgstr "Фильмы"
+
+#: movies/models.py:61
+#, fuzzy
+#| msgid "Movies"
+msgid "Movie"
+msgstr "Фильмы"
+
+#: movies/models.py:67
 msgid "title"
 msgstr "Заголовок"
 
-#: movies/models.py:74
+#: movies/models.py:69
 msgid "creation_date"
 msgstr "Дата создания"
 
-#: movies/models.py:75
+#: movies/models.py:70
 msgid "rating"
 msgstr "Рейтинг"
 
-#: movies/models.py:77
+#: movies/models.py:74
+msgid "file"
+msgstr "Файл"
+
+#: movies/models.py:75
 msgid "type"
 msgstr "Тип"
 
+#: movies/models.py:87
+msgid "Film's genres"
+msgstr "Жанры фильмов"
+
+#: movies/models.py:99
+msgid "actor"
+msgstr "Актер"
+
 #: movies/models.py:100
+msgid "director"
+msgstr "Режисер"
+
+#: movies/models.py:101
+msgid "screenwriter"
+msgstr "Сценарист"
+
+#: movies/models.py:105
 msgid "role"
 msgstr "Роль"
+
+#: movies/models.py:110
+msgid "Film crew"
+msgstr "Съемочная группа"

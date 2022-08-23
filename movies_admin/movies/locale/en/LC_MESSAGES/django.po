@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-14 14:13+0000\n"
+"POT-Creation-Date: 2022-08-23 10:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,46 +18,94 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: movies/apps.py:8
+#: movies/apps.py:8 movies/models.py:62
 msgid "Movies"
 msgstr ""
 
-#: movies/models.py:10 movies/models.py:85 movies/models.py:101
+#: movies/models.py:9 movies/models.py:83 movies/models.py:106
 msgid "created"
 msgstr ""
 
-#: movies/models.py:12
+#: movies/models.py:11
 msgid "modified"
 msgstr ""
 
-#: movies/models.py:20
+#: movies/models.py:19
 msgid "id"
 msgstr ""
 
-#: movies/models.py:32
+#: movies/models.py:28
 msgid "name"
 msgstr ""
 
-#: movies/models.py:34 movies/models.py:48 movies/models.py:73
+#: movies/models.py:30 movies/models.py:43 movies/models.py:68
 msgid "description"
 msgstr ""
 
-#: movies/models.py:72
+#: movies/models.py:34
+msgid "Genre"
+msgstr ""
+
+#: movies/models.py:35
+msgid "Genres"
+msgstr ""
+
+#: movies/models.py:47
+msgid "Person"
+msgstr ""
+
+#: movies/models.py:56
+msgid "tv_show"
+msgstr ""
+
+#: movies/models.py:57
+msgid "movie"
+msgstr ""
+
+#: movies/models.py:61
+msgid "Movie"
+msgstr ""
+
+#: movies/models.py:67
 msgid "title"
 msgstr ""
 
-#: movies/models.py:74
+#: movies/models.py:69
 msgid "creation_date"
 msgstr ""
 
-#: movies/models.py:75
+#: movies/models.py:70
 msgid "rating"
 msgstr ""
 
-#: movies/models.py:77
+#: movies/models.py:74
+msgid "file"
+msgstr ""
+
+#: movies/models.py:75
 msgid "type"
 msgstr ""
 
+#: movies/models.py:87
+msgid "Film's genres"
+msgstr ""
+
+#: movies/models.py:99
+msgid "actor"
+msgstr ""
+
 #: movies/models.py:100
+msgid "director"
+msgstr ""
+
+#: movies/models.py:101
+msgid "screenwriter"
+msgstr ""
+
+#: movies/models.py:105
 msgid "role"
+msgstr ""
+
+#: movies/models.py:110
+msgid "Film crew"
 msgstr ""
