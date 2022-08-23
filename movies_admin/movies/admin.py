@@ -10,7 +10,7 @@ class GenreFilmWorkInline(admin.TabularInline):
 
 class PersonFilmWorkInline(admin.TabularInline):
     model = PersonFilmWork
-    autocomplete_fields = ('person')
+    autocomplete_fields = ('person', )
 
 
 @admin.register(Genre)

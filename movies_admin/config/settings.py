@@ -97,13 +97,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-from split_settings.tools import include
-
 load_dotenv()
-
-include(
-    'components/database.py',
-)
 
 STATIC_URL = '/static/'
 
