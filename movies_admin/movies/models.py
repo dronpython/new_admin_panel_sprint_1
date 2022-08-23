@@ -108,3 +108,8 @@ class PersonFilmWork(UUIDMixin):
     class Meta:
         db_table = 'content\".\"person_film_work'
         verbose_name = _('Film crew')
+        indexes = [
+            models.Index(fields=['film_work'], name='film_work_fk_idx'),
+            models.Index(fields=['person'], name='person_fk_idx'),
+
+        ]
