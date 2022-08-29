@@ -88,7 +88,7 @@ class GenreFilmWork(UUIDMixin):
         constraints = [models.UniqueConstraint(fields=['film_work_id', 'genre_id'],
                                                name='film_work_genre_idx')]
         indexes = [
-            models.Index(fields=['film_work'], name='film_work_fk_idx'),
+            models.Index(fields=['film_work'], name='genre_film_work_fk_idx'),
             models.Index(fields=['genre'], name='genre_fk_idx'),
 
         ]
@@ -109,7 +109,7 @@ class PersonFilmWork(UUIDMixin):
         db_table = 'content\".\"person_film_work'
         verbose_name = _('Film crew')
         indexes = [
-            models.Index(fields=['film_work'], name='film_work_fk_idx'),
+            models.Index(fields=['film_work'], name='person_film_work_fk_idx'),
             models.Index(fields=['person'], name='person_fk_idx'),
 
         ]
