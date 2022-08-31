@@ -10,10 +10,12 @@ services:
   pgdb:
     image: postgres:13
     container_name: my_pg_13
+    env_file:
+      - config/.env
     environment:
-      - POSTGRES_USER=app
-      - POSTGRES_PASSWORD=123qwe
-      - POSTGRES_DB=movies_db
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     build:
       context: .
       dockerfile: Dockerfile_pg
