@@ -46,8 +46,7 @@ MIDDLEWARE = [
 
 ]
 
-CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:8080",]
-
+CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:8080"]
 
 ROOT_URLCONF = 'config.urls'
 
@@ -68,14 +67,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -107,9 +98,6 @@ load_dotenv()
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, "static"),
-# ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

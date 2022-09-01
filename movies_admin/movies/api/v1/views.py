@@ -16,15 +16,10 @@ class MoviesApiMixin:
                                                              distinct=True,
                                                              filter=Q(personfilmwork__role="director")),
                                           writers=ArrayAgg("persons__full_name",
-                                                             distinct=True,
-                                                             filter=Q(personfilmwork__role="writer")
+                                                           distinct=True,
+                                                           filter=Q(personfilmwork__role="writer")
                                           )).values()
-        # query = FilmWork.objects.annotate(genres=ArrayAgg("genre__name", distinct=True), actors=ArrayAgg("persons__full_name", distinct=True), roles=ArrayAgg("person_film_work__role", distinct=True))
-        return query  # Сформированный QuerySet
-
-    # def get_queryset(self):
-    #     query = FilmWork.objects.all().values("id", "title", "description", "creation_date")
-    #     return query  # Сформированный QuerySet
+        return query
 
     def render_to_response(self, context, **response_kwargs):
         return JsonResponse(context)
@@ -34,14 +29,6 @@ class MoviesListApi(MoviesApiMixin, BaseListView):
     model = FilmWork
     http_method_names = ['get']  # Список методов, которые реализует обработчик
     paginate_by = 50
-
-    # def get_queryset(self):
-    #     query = FilmWork.objects.all().select_related("genre", "person").values()
-    #     return query  # Сформированный QuerySet
-
-    # def paginate_queryset(self, queryset, paginate_by):
-    #     p = Paginator(queryset, paginate_by)
-    #     return p, p.num_pages, queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         page = self.request.GET.get('page', 1)
@@ -80,4 +67,3 @@ class MoviesDetailApi(MoviesApiMixin, BaseListView):
         uuid = self.kwargs.get('pk', None)  # получаем аргумент из ссылки
         data = self.get_queryset().get(id=uuid)
         return data
-
