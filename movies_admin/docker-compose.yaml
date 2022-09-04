@@ -7,8 +7,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+
   pgdb:
-    image: postgres:13
+    image: postgres:13-alpine
     container_name: my_pg_13
     env_file:
       - config/.env
@@ -16,13 +17,11 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
-    build:
-      context: .
-      dockerfile: Dockerfile_pg
     volumes:
       - $HOME/postgresql/data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
   nginx:
     image: nginx:1.19.2
     container_name: my-nginx

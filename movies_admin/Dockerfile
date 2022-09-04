@@ -6,12 +6,11 @@ ENV DJANGO_SETTINGS_MODULE 'config.settings'
 
 COPY requirements.txt requirements.txt
 
-RUN  pip install --upgrade pip \
-     && pip install -r requirements.txt
+RUN  pip install --no-cache-dir --upgrade pip \
+     && pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
 EXPOSE 8000
 
-ENTRYPOINT ["gunicorn"]
-CMD ["config.wsgi", "-b", "0.0.0.0:8000"]
+CMD ["gunicorn", "config.wsgi", "-b", "0.0.0.0:8000"]
