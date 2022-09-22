@@ -33,3 +33,8 @@ services:
       - django
     ports:
       - "80:80"
+  etl:
+    image: python:3.8
+    build:
+      context: /etl
+      dockerfile: Dockerfile
