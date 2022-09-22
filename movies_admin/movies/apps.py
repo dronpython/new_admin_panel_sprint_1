@@ -6,3 +6,10 @@ class MoviesConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'movies'
     verbose_name = _("Movies")
+
+
+# ToDo: check signals
+class AppsConfig(AppConfig):
+
+    def ready(self):
+        from .signals import attention

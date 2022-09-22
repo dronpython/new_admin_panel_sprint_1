@@ -1,0 +1,9 @@
+FROM postgres:13
+
+VOLUME $HOME/postgresql/data:/var/lib/postgresql/data
+
+ENV POSTGRES_PASSWORD=123qwe
+ENV POSTGRES_USER=app
+ENV POSTGRES_DB=movies_db
+
+EXPOSE 5432
