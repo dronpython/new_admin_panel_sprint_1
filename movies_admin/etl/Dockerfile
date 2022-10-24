@@ -1,6 +1,8 @@
 FROM python:3.8
 
-WORKDIR /etl
+WORKDIR /usr/app/
+
+VOLUME $HOME/etl_logs:/usr/app/etl/logs
 
 COPY requirements.txt requirements.txt
 

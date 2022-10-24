@@ -96,9 +96,9 @@ class GenreFilmWork(UUIDMixin):
 
 class PersonFilmWork(UUIDMixin):
     class PersonRoles(models.TextChoices):
-        actor = _('actor')
-        director = _('director')
-        screenwriter = _('screenwriter')
+        actor = 'actor'
+        director = 'director'
+        screenwriter = 'screenwriter'
 
     film_work = models.ForeignKey(FilmWork, on_delete=models.CASCADE)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)

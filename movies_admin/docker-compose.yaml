@@ -5,18 +5,19 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
+    expose:
+      - 8000
 
   pgdb:
     image: postgres:13-alpine
     container_name: my_pg_13
     env_file:
       - config/.env
-    environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h $${DB_HOST} -U $${DB_USER} -d $${DB_NAME}"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
     volumes:
       - $HOME/postgresql/data:/var/lib/postgresql/data
     ports:
@@ -32,9 +33,12 @@ services:
     depends_on:
       - django
     ports:
-      - "80:80"
-  etl:
-    image: python:3.8
-    build:
-      context: /etl
-      dockerfile: Dockerfile
+      - "8000:80"
+#  etl:
+#    image: python:3.8
+#    depends_on:
+#      pgdb:
+#        condition: service_healthy
+#    build:
+#      context: etl
+#      dockerfile: Dockerfile

@@ -1,8 +1,8 @@
 import logging
 from psycopg2.extras import _connection, _cursor, DictCursor
 from psycopg2 import connect
-from etl.misc.funcs import backoff
-from etl.creeds import Settings
+from misc.funcs import backoff
+from creeds import Settings
 from contextlib import contextmanager
 
 logger = logging.getLogger("elk")

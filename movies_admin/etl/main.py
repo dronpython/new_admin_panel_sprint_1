@@ -2,12 +2,12 @@ from time import sleep
 from datetime import datetime
 
 
-from etl.connectors.db_connector import DB
-from etl.misc.state import JsonFileStorage, State
-from etl.creeds import Settings
-from etl.misc.funcs import prepare_data
-from etl.connectors.elk_connector import es
-from etl.logging_ import logger
+from connectors.db_connector import DB
+from misc.state import JsonFileStorage, State
+from creeds import Settings
+from misc.funcs import prepare_data
+from connectors.elk_connector import es
+from logging_ import logger
 
 
 def update_data(table, last_update_date, size):
@@ -16,8 +16,11 @@ def update_data(table, last_update_date, size):
     for rows in data:
         logger.info(f"Load {len(rows)} rows")
         data_prepared = prepare_data(rows)
-        es.bulk(data_prepared)
-    logger.info(f"{table} updated")
+        try:
+            es.bulk(data_prepared)
+            logger.info(f"{table} updated")
+        except Exception as e:
+            logger.info(f"Got exception while update index: {e}")
 
 
 while True:
